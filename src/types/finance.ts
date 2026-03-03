@@ -8,6 +8,8 @@ export interface Transaction {
   amount: number;
   date: string;
   paymentMethod: string;
+  creditCardId?: string;
+  status?: 'recebido' | 'pendente';
 }
 
 export interface RecurringIncome {
@@ -57,12 +59,47 @@ export interface Pocket {
   usedAmount: number;
 }
 
+export interface Investment {
+  id: string;
+  assetName: string;
+  assetType: string;
+  investedAmount: number;
+  quantity: number;
+  startDate: string;
+  goalId?: string;
+  annualYield?: number;
+  purchasePrice?: number;
+}
+
+export interface Invoice {
+  id: string;
+  creditCardId: string;
+  cardName: string;
+  amount: number;
+  dueDate: string;
+  status: 'Paga' | 'Pendente';
+  transactions: Transaction[];
+  isManual?: boolean;
+}
+
+export interface ManualInvoice {
+  id: string;
+  creditCardId: string;
+  referenceMonth: string; // YYYY-MM
+  amount: number;
+  dueDate: string;
+  status: 'Paga' | 'Pendente';
+}
+
 export interface FinanceState {
   transactions: Transaction[];
   recurringIncomes: RecurringIncome[];
   fixedExpenses: FixedExpense[];
   profitRules: ProfitRule[];
   creditCards: CreditCard[];
+  invoices: Invoice[];
+  manualInvoices: ManualInvoice[];
   goals: Goal[];
   pockets: Pocket[];
+  investments: Investment[];
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { LayoutDashboard, Wallet, CalendarDays, Target, Briefcase, Settings, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
 
 interface SidebarProps {
   activeTab: string;
@@ -8,6 +9,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
+  const { signOut } = useAuth();
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'geral', label: 'Geral', icon: Settings },
@@ -37,8 +39,8 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
               disabled={item.disabled}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium",
-                isActive 
-                  ? "bg-[#FF4D00]/10 text-[#FF4D00]" 
+                isActive
+                  ? "bg-[#FF4D00]/10 text-[#FF4D00]"
                   : "text-gray-500 hover:bg-gray-50 hover:text-gray-900",
                 item.disabled && "opacity-50 cursor-not-allowed hover:bg-transparent hover:text-gray-500"
               )}
@@ -54,7 +56,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
       </nav>
 
       <div className="p-4 border-t border-gray-100">
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors text-sm font-medium">
+        <button onClick={signOut} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors text-sm font-medium">
           <LogOut className="w-5 h-5" />
           Sair
         </button>
