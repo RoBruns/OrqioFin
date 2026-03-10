@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Modal } from '@/components/ui/Modal';
 import { useFinance } from '@/context/FinanceContext';
-import { ChevronLeft, ChevronRight, Plus, Filter, CreditCard as CreditCardIcon, Wallet, ArrowUpRight, ArrowDownRight, Edit2, Trash2, Copy, CheckCircle2, Clock } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Filter, CreditCard as CreditCardIcon, Wallet, ArrowUpRight, ArrowDownRight, Edit2, Trash2, Copy, CheckCircle2, Clock, Landmark } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Select } from '@/components/ui/Select';
 import { DatePicker } from '@/components/ui/DatePicker';
+import { OFXImportModal } from '@/components/OFXImportModal';
+import { CSVImportModal } from '@/components/CSVImportModal';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import type { Transaction, TransactionType } from '@/types/finance';
 
 export function MensalPage() {
+  useDocumentTitle('Controle Mensal');
   const { transactions, creditCards, pockets, invoices, addTransaction, updateTransaction, deleteTransaction, recurringIncomes, fixedExpenses } = useFinance();
   const [currentDate, setCurrentDate] = useState(() => {
     const now = new Date();
@@ -61,8 +65,9 @@ export function MensalPage() {
     await updateTransaction(tx.id, { ...tx, status: newStatus });
   };
 
-  // Transaction Modal State
   const [txModalOpen, setTxModalOpen] = useState(false);
+  const [ofxModalOpen, setOfxModalOpen] = useState(false);
+  const [csvModalOpen, setCsvModalOpen] = useState(false);
   const [modalData, setModalData] = useState<Transaction | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -70,6 +75,7 @@ export function MensalPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [filterSearch, setFilterSearch] = useState('');
   const [filterType, setFilterType] = useState('all');
+  const [filterPaymentMethod, setFilterPaymentMethod] = useState('all');
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
 
@@ -136,8 +142,16 @@ export function MensalPage() {
     );
   }
 
+  if (filterPaymentMethod !== 'all') {
+    filteredTransactions = filteredTransactions.filter(t => t.paymentMethod === filterPaymentMethod && t.type === 'expense');
+  }
+
   // Ordenar transações por data (mais recentes primeiro)
   filteredTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  const totalFilteredExpenses = filteredTransactions
+    .filter(t => t.type === 'expense')
+    .reduce((acc, curr) => acc + curr.amount, 0);
 
   return (
     <motion.div
@@ -249,6 +263,22 @@ export function MensalPage() {
                 <Filter className="w-4 h-4" />
               </button>
               <button
+                onClick={() => setCsvModalOpen(true)}
+                className="flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium border border-gray-200"
+                title="Importar Fatura de Cartão de Crédito"
+              >
+                <CreditCardIcon className="w-4 h-4 text-emerald-600" />
+                Fatura Cartão (CSV)
+              </button>
+              <button
+                onClick={() => setOfxModalOpen(true)}
+                className="flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium border border-gray-200"
+                title="Importar Extrato Bancário Geral"
+              >
+                <Landmark className="w-4 h-4 text-blue-600" />
+                Extrato Conta (OFX)
+              </button>
+              <button
                 onClick={() => { setModalData(null); setIsEditing(false); setTxModalOpen(true); }}
                 className="flex items-center gap-2 px-4 py-2 bg-[#FF4D00] text-white rounded-lg hover:bg-[#E64500] transition-colors text-sm font-medium shadow-md shadow-[#FF4D00]/20"
               >
@@ -279,6 +309,28 @@ export function MensalPage() {
                   { value: 'expense', label: 'Despesas (-)' }
                 ]}
               />
+              <Select
+                value={filterPaymentMethod}
+                onChange={val => setFilterPaymentMethod(val)}
+                className="w-full sm:w-[200px]"
+                options={[
+                  { value: 'all', label: 'Todas Formas' },
+                  { value: 'Pix/Transferência', label: 'Pix / Transf.' },
+                  { value: 'Boleto', label: 'Boleto' },
+                  { value: 'Cartão de Crédito', label: 'Cartão de Crédito' },
+                  { value: 'Cartão de Débito', label: 'Cartão de Débito' },
+                  { value: 'Dinheiro', label: 'Dinheiro' }
+                ]}
+              />
+            </div>
+          )}
+
+          {showFilters && (filterType === 'expense' || filterPaymentMethod !== 'all' || filterSearch) && totalFilteredExpenses > 0 && (
+            <div className="px-6 py-3 bg-red-50/50 border-b border-gray-100 flex justify-end items-center">
+              <span className="text-sm font-medium text-gray-600 mr-2">Total Despesas Filtradas:</span>
+              <span className="text-base font-bold text-red-600">
+                R$ {totalFilteredExpenses.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              </span>
             </div>
           )}
 
@@ -510,6 +562,16 @@ export function MensalPage() {
           </button>
         </form>
       </Modal>
+
+      {/* OFX Import Modal */}
+      {ofxModalOpen && (
+        <OFXImportModal onClose={() => setOfxModalOpen(false)} />
+      )}
+
+      {/* CSV Import Modal */}
+      {csvModalOpen && (
+        <CSVImportModal onClose={() => setCsvModalOpen(false)} />
+      )}
 
     </motion.div>
   );

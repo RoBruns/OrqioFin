@@ -6,8 +6,10 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { motion } from 'motion/react';
 import { format, subMonths, isSameMonth, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function DashboardPage() {
+  useDocumentTitle('Dashboard');
   const { transactions, goals, invoices, investments, marketPrices } = useFinance();
 
   const last6Months = Array.from({ length: 6 }).map((_, i) => subMonths(new Date(), 5 - i));

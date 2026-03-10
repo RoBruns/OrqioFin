@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function LoginPage() {
+    useDocumentTitle('Login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isSignUp, setIsSignUp] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
+    const [isLogin, setIsLogin] = useState(true);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

@@ -8,9 +8,11 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianG
 import { Select } from '@/components/ui/Select';
 import { DatePicker } from '@/components/ui/DatePicker';
 import { MonthPicker } from '@/components/ui/MonthPicker';
-import type { RecurringIncome, FixedExpense, ProfitRule, CreditCard, Invoice, ManualInvoice } from '@/types/finance';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import type { RecurringIncome, FixedExpense, ProfitRule, CreditCard, Invoice, ManualInvoice, Transaction, TransactionType } from '@/types/finance';
 
 export function GeralPage() {
+  useDocumentTitle('Controle Geral');
   const {
     recurringIncomes, fixedExpenses, profitRules, creditCards,
     addRecurringIncome, updateRecurringIncome, deleteRecurringIncome,

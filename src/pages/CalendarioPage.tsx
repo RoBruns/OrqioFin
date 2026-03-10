@@ -5,8 +5,10 @@ import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, ArrowUpRight, Arro
 import { motion } from 'motion/react';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, getDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function CalendarioPage() {
+  useDocumentTitle('Calendário');
   const { transactions, creditCards, recurringIncomes, fixedExpenses } = useFinance();
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -51,7 +53,7 @@ export function CalendarioPage() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -62,7 +64,7 @@ export function CalendarioPage() {
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">Calendário</h1>
           <p className="text-gray-500 mt-1">Visualize seus compromissos financeiros do mês.</p>
         </div>
-        
+
         <div className="flex items-center gap-4 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
           <button onClick={prevMonth} className="p-1 hover:bg-gray-100 rounded-md transition-colors"><ChevronLeft className="w-5 h-5 text-gray-600" /></button>
           <span className="font-semibold text-gray-900 min-w-[150px] text-center capitalize">
@@ -85,14 +87,14 @@ export function CalendarioPage() {
             {Array.from({ length: startDayOfWeek }).map((_, i) => (
               <div key={`empty-${i}`} className="min-h-[120px] p-2 border-b border-r border-gray-100 bg-gray-50/30" />
             ))}
-            
+
             {days.map((day, idx) => {
               const events = getEventsForDay(day);
               const isToday = isSameDay(day, new Date());
-              
+
               return (
-                <div 
-                  key={day.toString()} 
+                <div
+                  key={day.toString()}
                   className={`min-h-[120px] p-2 border-b border-r border-gray-100 transition-colors hover:bg-gray-50/50 ${isToday ? 'bg-orange-50/30' : 'bg-white'}`}
                 >
                   <div className="flex justify-between items-start mb-2">
@@ -104,8 +106,8 @@ export function CalendarioPage() {
                     {events.map((event, i) => {
                       const Icon = event.icon;
                       return (
-                        <div 
-                          key={i} 
+                        <div
+                          key={i}
                           className={`flex items-center justify-between p-1.5 rounded-md ${event.bg} cursor-pointer hover:opacity-80 transition-opacity`}
                           title={`${event.title}: R$ ${event.amount}`}
                         >

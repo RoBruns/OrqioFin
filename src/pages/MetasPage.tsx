@@ -6,8 +6,10 @@ import { Target, Plus, TrendingUp, Calendar, Edit2, Trash2, PieChart, TrendingDo
 import { motion } from 'motion/react';
 import type { Goal, Investment } from '@/types/finance';
 import { InvestmentForm } from '@/components/InvestmentForm';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function MetasPage() {
+  useDocumentTitle('Metas');
   const { goals, addGoal, updateGoal, deleteGoal, investments, addInvestment, updateInvestment, deleteInvestment, marketPrices, refreshMarketPrices } = useFinance();
   const [activeTab, setActiveTab] = useState<'metas' | 'investimentos'>('metas');
 
