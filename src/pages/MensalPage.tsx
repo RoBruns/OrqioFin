@@ -136,6 +136,9 @@ export function MensalPage() {
     );
   }
 
+  // Ordenar transações por data (mais recentes primeiro)
+  filteredTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
